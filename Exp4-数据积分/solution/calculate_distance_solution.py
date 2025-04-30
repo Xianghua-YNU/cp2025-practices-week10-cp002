@@ -6,9 +6,8 @@ import os
 def main():
     try:
         # 1. 获取数据文件路径（使用绝对路径）
-        data_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_file = os.path.join(data_dir, 'Velocities.txt')
-        
+        data_file = r"C:\Users\84786\Desktop\velocities.txt"
+
         # 2. 读取数据
         data = np.loadtxt(data_file)
         t = data[:, 0]  # 时间列
@@ -23,20 +22,20 @@ def main():
 
         # 4. 绘制图表
         plt.figure(figsize=(10, 6))
-        
+
         # Plot velocity curve
         plt.plot(t, v, 'b-', label='Velocity (m/s)')
-        
+
         # Plot distance curve 
         plt.plot(t, distance, 'r--', label='Distance (m)')
-        
+
         # Chart decoration
         plt.title('Velocity and Distance vs Time')
         plt.xlabel('Time (s)')
         plt.ylabel('Velocity (m/s) / Distance (m)')
         plt.legend()
         plt.grid(True)
-        
+
         # 显示图表
         plt.show()
     except FileNotFoundError:
