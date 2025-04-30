@@ -1,88 +1,46 @@
 import numpy as np
-import matplotlib
-
-
 
 # 待积分函数
 def f(x):
-    return x ** 4 - 2 * x + 1
+    return x**4 - 2*x + 1
 
-
-# 梯形法则积分函数
+# 已给出的梯形法则积分函数，供参考比较用
 def trapezoidal(f, a, b, N):
-    """
-    梯形法数值积分
-    :param f: 被积函数
-    :param a: 积分下限
-    :param b: 积分上限
-    :param N: 子区间数
-    :return: 积分近似值
-    """
     h = (b - a) / N
-    result = 0.5 * (f(a) + f(b))
-    for i in range(1, N):
-        result += f(a + i * h)
-    return result * h
+    x = np.linspace(a, b, N+1)
+    fx = f(x)
+    integral = h * (0.5 * fx[0] + np.sum(fx[1:-1]) + 0.5 * fx[-1])
+    return integral
 
-
-# Simpson法则积分函数
+# Simpson 法则积分函数
 def simpson(f, a, b, N):
-    """
-    Simpson法数值积分
-    :param f: 被积函数
-    :param a: 积分下限
-    :param b: 积分上限
-    :param N: 子区间数（必须为偶数）
-    :return: 积分近似值
-    """
     if N % 2 != 0:
-        raise ValueError("N 必须为偶数")
+        raise ValueError("Simpson 法则要求 N 必须为偶数")
     h = (b - a) / N
-    result = f(a) + f(b)
-    for i in range(1, N, 2):
-        result += 4 * f(a + i * h)
-    for i in range(2, N - 1, 2):
-        result += 2 * f(a + i * h)
-    return result * h / 3
-
+    x = np.linspace(a, b, N+1)
+    fx = f(x)
+    # 奇数索引（1,3,5,...,N-1）
+    odd_sum = np.sum(fx[1:N:2])
+    # 偶数索引（2,4,6,...,N-2）
+    even_sum = np.sum(fx[2:N:2])
+    integral = h / 3 * (fx[0] + 4 * odd_sum + 2 * even_sum + fx[N])
+    return integral
 
 def main():
-    a, b = 0, 2  # 积分区间
-    exact_integral = 4.4  # 精确解
+    a, b = 0, 2
+    exact_integral = 4.4
 
-    results = {"N": [], "Trapezoidal": [], "Simpson": [], "Trapezoidal Error": [], "Simpson Error": []}
-
-    for N in [100, 1000]:  # 不同子区间数
+    for N in [100, 1000]:
         trapezoidal_result = trapezoidal(f, a, b, N)
         simpson_result = simpson(f, a, b, N)
 
         trapezoidal_error = abs(trapezoidal_result - exact_integral) / exact_integral
         simpson_error = abs(simpson_result - exact_integral) / exact_integral
 
-        results["N"].append(N)
-        results["Trapezoidal"].append(trapezoidal_result)
-        results["Simpson"].append(simpson_result)
-        results["Trapezoidal Error"].append(trapezoidal_error)
-        results["Simpson Error"].append(simpson_error)
-
         print(f"N = {N}")
         print(f"梯形法则结果: {trapezoidal_result:.8f}, 相对误差: {trapezoidal_error:.2e}")
         print(f"Simpson法则结果: {simpson_result:.8f}, 相对误差: {simpson_error:.2e}")
         print("-" * 40)
-
-    # 绘制误差图并保存
-    plt.figure()
-    plt.loglog(results["N"], results["Trapezoidal Error"], label="Trapezoidal Error", marker='o')
-    plt.loglog(results["N"], results["Simpson Error"], label="Simpson Error", marker='s')
-    plt.xlabel("Number of Subintervals (N)")
-    plt.ylabel("Relative Error")
-    plt.title("Error Comparison: Trapezoidal vs Simpson")
-    plt.legend()
-    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
-    plt.savefig(r"C:\Users\31025\OneDrive\桌面\t\integration_error.png")
-    print("图像已保存到 C:\\Users\\31025\\OneDrive\\桌面\\t\\integration_error.png")
-    # plt.show()  # 如果需要显示图像，请取消注释此行
-
 
 if __name__ == '__main__':
     main()
