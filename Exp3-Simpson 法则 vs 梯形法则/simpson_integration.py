@@ -1,8 +1,6 @@
 import numpy as np
 import matplotlib
 
-matplotlib.use('Agg')  # 使用无图形界面的后端
-import matplotlib.pyplot as plt
 
 
 # 待积分函数
